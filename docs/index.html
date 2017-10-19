@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>多级联动菜单</title>
+<meta charset="utf-8">
+<meta name="author" content="">
+<meta name="keywords" content="HTML5,WEIXIN,WECHAT,LOOP-BEATS">
+<meta name="viewport" content="width=device-width,target-densitydpi=device-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="format-detection" content="email=no" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<script src="jquery.1.11.3.min.js"></script>
+<script type="text/javascript" src="../dist/selectWheel.min.js" ></script>
+</head>
+<body>
+    <table class="">
+        <tr>
+            <td>所在地区：</td>
+            <td><div id="address">收货人地址</div></td>
+        </tr>
+        <tr>
+            <td>分类：</td>
+            <td><div id="address2">自定义数据</div></td>
+        </tr>
+    </table>
+<!--------------------------------------------------------------html区域-------------------------------------------------------------------------------------------->
+
+<!--------------------------------------------------------------javascript区域-------------------------------------------------------------------------------------->
+
+<script type="text/javascript" >
+	/*$('#address').on('touchend',function(event){
+		event.preventDefault();
+		selectWheel({
+			//data : [],
+			success : function(data){
+				console.log(data);
+				$('#address').html(data.join(' '));
+			}
+		})
+	});*/
+
+	new selectWheel('#address', {
+		//data : [],
+		success : function(data){
+			console.log(data);
+			$('#address').html(data.join(' '));
+		}
+	})
+	
+	/**********
+	 *自定义数据
+	 **********/
+	var testData = [
+		{
+			label : '一级',
+			value : [
+				{
+				    "id": 1,
+				    "pid":null,
+				    "name": "红酒"
+				},
+				{
+				    "id": 2,
+				    "pid":null,
+				    "name": "白酒"
+				},
+				{
+				    "id": 3,
+				    "pid":null,
+				    "name": "鸡尾酒"
+				},
+				{
+				    "id": 4,
+				    "pid":null,
+				    "name": "药酒"
+				}
+			]
+		},
+		{
+			label : '二级',
+			value : [
+				{
+				    "id": 11,
+				    "pid":1,
+				    "name": "红酒001"
+				},
+				{
+				    "id": 12,
+				    "pid":1,
+				    "name": "红酒002"
+				},
+				{
+				    "id": 13,
+				    "pid":1,
+				    "name": "红酒003"
+				},
+				{
+				    "id": 21,
+				    "pid":2,
+				    "name": "白酒001"
+				},
+				{
+				    "id": 31,
+				    "pid":3,
+				    "name": "鸡尾酒001"
+				}
+			]
+		},
+		{
+			label : '三级',
+			value : [
+				{
+				    "id": 121,
+				    "pid":12,
+				    "name": "红酒002-001"
+				},
+				{
+				    "id": 131,
+				    "pid":13,
+				    "name": "红酒003-001"
+				},
+				{
+				    "id": 311,
+				    "pid":31,
+				    "name": "鸡尾酒001-001"
+				},
+				{
+				    "id": 312,
+				    "pid":31,
+				    "name": "鸡尾酒001-002"
+				}
+			]
+		}
+	];
+	/*
+	$('#address2').on('touchend',function(event){
+		event.preventDefault();
+		selectWheel({
+			data : testData,
+			success : function(data){
+				console.log(data);
+				$('#address2').html(data.join(' '));
+			}
+		})
+	});*/
+	new selectWheel('#address2', {
+		data : testData,
+		success : function(data){
+			console.log(data);
+			$('#address2').html(data.join(' '));
+		}
+	})
+</script>
+
+</html>
