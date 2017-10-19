@@ -14,6 +14,7 @@ selectWheel for mobile
 ## script
 ```javascript
 new selectWheel('#address', {
+    speed : 600,
     success : function(data){
         console.log(data);
         $('#address').html(data.join(' '));
@@ -78,6 +79,7 @@ var myData = [
     
 new selectWheel('#address', {
     data : myData,
+    speed : 600,
     success : function(data){
         console.log(data);
         $('#address').html(data.join(' '));
