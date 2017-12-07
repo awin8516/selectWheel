@@ -57,7 +57,7 @@ require('./style.css');
 				};
 				if(html == ''){fn.remove();return;};
 				var li = $(html);
-				o.ul.eq(index).html(li);
+				o.ul.eq(index).html(li).nextAll().html('');
 				li.on(touchEvent,function(e){
 					e.preventDefault();
 					o.selected[index] = $(this).text() || '';
