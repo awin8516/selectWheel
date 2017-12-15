@@ -11,43 +11,53 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<script src="jquery.1.11.3.min.js"></script>
 <script type="text/javascript" src="../dist/selectWheel.min.js" ></script>
+<!-- <link href="../src/style.css" rel="stylesheet">
+<script type="text/javascript" src="../src/fun.js" ></script>
+<script type="text/javascript" src="../src/selectWheel.js" ></script> -->
+<style>
+	*{font-size:12px;}
+	table {width:100%;}
+	table td{padding:1em;}
+	table td div {padding:1em;border:1px #ddd solid;border-radius:5px;}
+</style>
 </head>
 <body>
     <table class="">
         <tr>
             <td>所在地区：</td>
-            <td><div id="address">收货人地址</div></td>
+            <td><div id="address1">收货人地址-样式1</div></td>
+        </tr>
+        <tr>
+            <td>所在地区：</td>
+            <td><div id="address2">收货人地址-样式2</div></td>
         </tr>
         <tr>
             <td>分类：</td>
-            <td><div id="address2">自定义数据</div></td>
+            <td><div id="address3">自定义数据</div></td>
+        </tr>
+        <tr>
+            <td>年月日：</td>
+            <td><div id="address4">年/月/日</div></td>
         </tr>
     </table>
-<!--------------------------------------------------------------html区域-------------------------------------------------------------------------------------------->
-
-<!--------------------------------------------------------------javascript区域-------------------------------------------------------------------------------------->
 
 <script type="text/javascript" >
-	/*$('#address').on('touchend',function(event){
-		event.preventDefault();
-		selectWheel({
-			//data : [],
-			success : function(data){
-				console.log(data);
-				$('#address').html(data.join(' '));
-			}
-		})
-	});*/
-
-	new selectWheel('#address', {
-		//data : [],
+window.onload = function(){
+	new selectWheel('#address1', {
 		success : function(data){
 			console.log(data);
-			$('#address').html(data.join(' '));
+			document.getElementById('address1').innerHTML = data.join(' ');
 		}
-	})
+	});
+	
+	new selectWheel('#address2', {
+		style : 'gear',
+		success : function(data){
+			console.log(data);
+			document.getElementById('address2').innerHTML = data.join(' ');
+		}
+	});
 	
 	/**********
 	 *自定义数据
@@ -134,24 +144,22 @@
 			]
 		}
 	];
-	/*
-	$('#address2').on('touchend',function(event){
-		event.preventDefault();
-		selectWheel({
-			data : testData,
-			success : function(data){
-				console.log(data);
-				$('#address2').html(data.join(' '));
-			}
-		})
-	});*/
-	new selectWheel('#address2', {
+	new selectWheel('#address3', {
 		data : testData,
 		success : function(data){
 			console.log(data);
-			$('#address2').html(data.join(' '));
+			document.getElementById('address3').innerHTML = data.join(' ');
 		}
-	})
+	});
+	
+	new selectWheel('#address4', {
+		datePicker : true,
+		success : function(data){
+			console.log(data);
+			document.getElementById('address4').innerHTML = data.join(' ');
+		}
+	});
+}
 </script>
 
 </html>
