@@ -1,13 +1,29 @@
-/*
+/**
  * by F 
  * date 2015-07-02
  * version 1.0.0
  */
 require('./style.css');
+const _$ = require('./fun.js');
+/**/
+// function require(url){
+// 	var res;
+// 	$.ajax({
+// 		url: '../src/'+url.replace('./', ''),
+// 		async:false,
+// 		dataType: "json",
+// 		cache:true,
+// 		success: function(data){
+// 			res = data;
+// 		}
+// 	});
+// 	return res
+// };
 (function(){
 	window.selectWheel = function(selecter, option){
-		option = $.extend({
-			page : 'body>.container',
+		this.option = _$.extend({
+			style : 'slide', //slide|gear
+			datePicker : false,
 			data : [
 				{
 					label : '省',
@@ -22,107 +38,168 @@ require('./style.css');
 					value : require('./district.json')
 				}
 			],
-			speed : 600,
+			speed : 500,
+			init : null,
 			success : null
-		}, option || {});
-		
-		var touchEvent = 'click';
-		var o;
-		var fn = {
-			getData : function(index, callback){
-				if(jQuery.isArray(option.data[index].value)){
-					callback(option.data[index].value);
+		}, option);
+		var that = this;
+		this.option.style = this.option.datePicker ? 'gear' : this.option.style;
+		this.isgear = this.option.style == 'gear';
+		this.touchEvent = 'click';
+		this.setData = function(index, data, pid){
+			var html = '';
+			for(var i=0; i<data.length; i++){
+				if(data[i].pid == pid || !pid){
+					html += '<li data-id="' + data[i].id +'"    '+(data[i].pid? "data-pid=" + data[i].pid:'')+' >' + data[i].name + '</li>';
+				};
+			};
+			if(!that.isgear && html == ''){
+				that.complete();
+				return;
+			};
+			var space = that.isgear ? '<li class="space"></li><li class="space"></li><li class="space"></li>' : '';
+			that.o.ul[index].innerHTML = space+html+space;
+			that.o.ul[index].children = _$.children(that.o.ul[index]);
+			!that.liHeight && (that.liHeight = that.o.ul[index].children[0].clientHeight);
+			that.o.ul[index].scrollTop = 0;
+			that.isgear && that.gearTo(that.o.ul[index], 3);
+			
+		};
+		this.goto = function(index, pid, back){
+			if(that.isgear){
+				if(index < 0 || index == that.option.data.length) return;
+			}else{
+				if(index < 0) {
+					that.hide();
+					return;
+				}else if(index == that.option.data.length) {
+					that.complete();
 					return;
 				};
-				//callback(data);
-				/**
-				$.ajax({
-					url: option.data[index].value,
-					async:true,
-					dataType: "json",
-					cache:true,
-					error: function(res){alert(option.data[index].value+"读取错误!");},
-					success: function(data){
-						callback(data);
-					}
-				});
-				/**/
-			},
-			setData : function(index, data, pid){
-				var html = '';
-				for(var i=0; i<data.length; i++){
-					if(data[i].pid == pid || pid == undefined){
-						html += '<li data-id="' + data[i].id +'" data-pid="' + data[i].pid +'">' + data[i].name + '</li>';
-					};
-				};
-				if(html == ''){fn.remove();return;};
-				var li = $(html);
-				o.ul.eq(index).html(li).nextAll().html('');
-				li.on(touchEvent,function(e){
-					e.preventDefault();
-					o.selected[index] = $(this).text() || '';
-					o.selected.splice(index+1,100);
-					fn.goto(index+1, parseInt(  $(this).data('id')  ));
-				});
-			},
-			goto : function(index, pid, back){
-				index = index || 0;
-				if(index == option.data.length || index < 0) {fn.remove();return;}
-				o.attr('class','select-wheel select-wheel-active select-wheel-'+index);
-				o.title.html(o.selected[index-1] || option.data[index].label);
-				o.back.off().on(touchEvent,function(e){
-					e.preventDefault();
-					fn.goto(index-1, null, true);
-				});
-				if(!back){
-					fn.getData(index, function(data){
-						fn.setData(index, data, pid);
-					});
-				};
-			},
-			remove : function(){
-				o.page.removeClass('select-wheel-page');
-				o.window.scrollTop(o.scrollTop);
-				o.attr('class','select-wheel');
-				option.success && option.success(o.selected);
-			},
-			addCssSpeed : function (speed) {
-				return {
-					"-webkit-transition": "-webkit-transform " + speed + "ms",
-					"-moz-transition": "-moz-transform " + speed + "ms",
-					"-o-transition": "-o-transform " + speed + "ms",
-					"transition": "transform " + speed + "ms"
-				};
-			},
-			setup : function(){
-				o.page.addClass('select-wheel-page');
-				o.addClass('select-wheel-active');
-				fn.goto();
-			}
+			};
+			that.o.element.className = that.o.elClass + ' select-wheel-show select-wheel-'+index;
+			that.o.title.innerHTML = that.selected[index-1] || that.option.data[index].label;
+			that.o.back.dataset.index = index-1;
+			!back && that.option.data[index] && that.setData(index, that.option.data[index].value, pid);
 		};
-		var ul = '';
-		for(var i=0; i<option.data.length; i++){
-			ul += '<ul class="select-wheel-ul-'+i+'"><span>加载中...</span></ul>';
+		this.addCssSpeed = function (speed) {
+			return {
+				"-webkit-transition": "-webkit-transform " + speed + "ms",
+				"-moz-transition": "-moz-transform " + speed + "ms",
+				"-o-transition": "-o-transform " + speed + "ms",
+				"transition": "transform " + speed + "ms"
+			};
 		};
-		o =  $('<div class="select-wheel">'+
-					'<div class="select-wheel-inside">'+
-						'<div class="select-wheel-header"><div class="select-wheel-back"></div><h1>'+option.data[0].label+'</h1></div>'+
-						'<div class="select-wheel-body">'+ul+'</div>'+
-					'</div>'+
-			   '</div>').appendTo('body');
-		o.window    = $(window);
-		o.selecter  = $(selecter);
-		o.page      = $('html');
-		o.scrollTop = $(window).scrollTop();
-		o.inside    = o.children();
-		o.head      = o.inside.children().eq(0);
-		o.back      = o.head.children().eq(0);
-		o.title     = o.head.children().eq(1);
-		o.body      = o.inside.children().eq(1);
-		o.ul        = o.body.children();
-		o.selected  = [];
-		o.inside.css(fn.addCssSpeed(option.speed));
-		o.body.css(fn.addCssSpeed(option.speed));
-		o.selecter.on(touchEvent, fn.setup);
+		this.triggerLi = function(_this){
+			var selected = _$.children(_this.parentNode, '.selected');
+			_$.removeClass('selected', selected);
+			_$.addClass('selected', _this);
+			var index = parseInt(_this.parentNode.dataset.index);
+			that.selected[index] = _this.innerText || '';
+			that.selected.splice(index+1,100);
+			that.goto(index+1, parseInt(  _this.dataset.id  ));
+		}
+		this.getIndex = function(top){
+			return Math.round(top/that.liHeight)+3;
+		};
+		this.gearTo = function(ul, index){
+			_$.animate(ul, {scrollTop : (index-3) * that.liHeight}, 1);
+			that.triggerLi(ul.children[index]);
+		};
+		this.show = function(){
+			_$.addClass('select-wheel-active', that.o.html);
+			_$.addClass('select-wheel-show', that.o.element);
+			that.goto(0);
+		};
+		this.hide = function(){
+			window.scrollTo(0,that.scrollTop);
+			_$.removeClass('select-wheel-active', that.o.html);
+			_$.removeClass('select-wheel-show', that.o.element);
+			setTimeout(function(){
+				that.o.element.className = that.o.elClass;
+			}, that.option.speed);
+		};
+		this.complete = function(){
+			that.hide();
+			that.option.success && that.option.success(that.selected);
+		};
+		this.setDateValue = function(){
+			var year = new Date().getFullYear();
+			var label = ['年', '月', '日'];
+			var start = [1990, 1, 1];
+			var end = [year,12, 31];
+			for(var i=0; i<3; i++){
+				that.option.data[i].label = label[i];
+				that.option.data[i].value = [];
+				for(var m=start[i]; m<=end[i]; m++){
+					that.option.data[i].value.push({name:m+label[i]});
+				};
+			};
+		};
+		this.init = function(){
+			var html =  '<div class="select-wheel select-wheel-style-'+that.option.style+'">'+
+							'<div class="select-wheel-inside">'+
+								'<div class="select-wheel-header"><div class="select-wheel-back" data-index="-1"></div><div class="select-wheel-cancel"></div><h1 class="select-wheel-title">'+that.option.data[0].label+'</h1><div class="select-wheel-confirm"></div></div>'+
+								'<div class="select-wheel-body">';
+								for(var i=0; i<that.option.data.length; i++){
+									html += '<ul class="select-wheel-ul-'+i+'" data-index="'+i+'"></ul>';
+								};
+								html +='</div>'+
+							'</div>'+
+						'</div>';
+			
+			that.scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+			that.selected  = [];
+			that.o = {};
+			that.o.html    = _$.getElement('html')[0];
+			that.o.element = _$.elem(html)[0];
+			that.o.elClass = that.o.element.className;
+			that.o.selecter= _$.getElement(selecter)[0];
+			that.o.inside  = _$.children(that.o.element)[0];
+			that.o.header  = _$.children(that.o.inside)[0];
+			that.o.back    = _$.children(that.o.header)[0];
+			that.o.cancel  = _$.children(that.o.header)[1];
+			that.o.title   = _$.children(that.o.header)[2];
+			that.o.confirm = _$.children(that.o.header)[3];
+			that.o.body    = _$.children(that.o.inside)[1];
+			that.o.ul      = _$.children(that.o.body);
+			_$.append(that.o.element, document.body||document.documentElement);			
+			_$.css(that.o.element, {'transition-delay':that.option.speed+'ms'});
+			_$.css(that.o.inside, that.addCssSpeed(that.option.speed));
+			_$.css(that.o.body, that.addCssSpeed(that.option.speed));
+			/**/
+			_$.addEvent(that.o.selecter, that.touchEvent, that.show);
+			_$.addEvent(that.o.back, that.touchEvent, function(){
+				that.goto(this.dataset.index, null, true);
+			});
+			_$.addEvent(that.o.cancel, that.touchEvent, that.hide);
+			_$.addEvent(that.o.confirm, that.touchEvent, that.complete);			
+			_$.addEvent(that.o.element, that.touchEvent, function(e){
+				 e.preventDefault();
+				 if( _$.target(e) == this){
+				 	that.hide();
+				 };
+			});
+			_$.addEvent(that.o.ul, that.touchEvent, function(e){
+				e.preventDefault();
+				var _this = _$.target(e);
+				if(_this.tagName == 'LI' && _this.className != 'label' && _this.className != 'space'){
+					that.triggerLi(_this);
+				}
+			});
+			
+			that.isgear && _$.addEvent(that.o.ul, 'touchend', function(e){
+				var _this = this;
+				_$.onScrollEnd(_this, function(){					
+					var index = that.getIndex(_this.scrollTop);
+					that.gearTo(_this, index);
+				})
+			});
+
+			this.option.datePicker && this.setDateValue();
+			
+			that.option.init && that.option.init();
+		};
+		this.init();
 	};
 })();

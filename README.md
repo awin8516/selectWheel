@@ -17,7 +17,7 @@ new selectWheel('#address', {
     speed : 600,
     success : function(data){
         console.log(data);
-        $('#address').html(data.join(' '));
+        document.getElementById('address').innerHTML = data.join(' ');
     }
 })
 ``` 
@@ -86,6 +86,15 @@ new selectWheel('#address', {
     }
 })
 ``` 
+### option
+|key |value|
+|:--:|-----|
+|style| 样式 slide/gear 默认slide @String
+|datePicker|年/月/日 默认false @Boolean
+|data| 自定义数据 @Object
+|speed| 展开速度 默认500 @Number
+|init| 初始化回调 @function	
+|success| 完成回调 @function 
 
 ## Example
 1. [Demo](https://awin8516.github.io/selectWheel/docs/)  
