@@ -52,7 +52,7 @@
 .select-wheel-style-gear .select-wheel-body ul:before{content:'';position:absolute;z-index:100;top:0;width:33.3%;height:42%;background:linear-gradient(rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.4));}
 .select-wheel-style-gear .select-wheel-body ul:after{content:'';position:absolute;z-index:100;bottom:0;width:33.3%;height:42%;background:linear-gradient( rgba(255, 255, 255, 0.4),rgba(255, 255, 255, 0.9));}
 .select-wheel-style-gear .select-wheel-body ul{width:33.3%;height:100%;font-size:12px;display:inline-block;text-align: left; letter-spacing:0;vertical-align:top;overflow-x:hidden;overflow-y:scroll;/*-webkit-overflow-scrolling:touch;*/}
-.select-wheel-style-gear .select-wheel-body:before{content:'';display: block; width: 100%; height:1px;position:absolute;left:0;top:42.857142857%;background:#ddd;}
+.select-wheel-style-gear .select-wheel-body:before{content:'';display: block; width: 100%; height:1px;position:absolute;left:0;top:42.857142857%;background:#ddd;margin-top:-2px;}
 .select-wheel-style-gear .select-wheel-body:after {content:'';display: block; width: 100%; height:1px;position:absolute;left:0;bottom:42.857142857%;background:#ddd;}
 .select-wheel-style-gear .select-wheel-body ul li {width: 80%;height: 14.285714285%; margin: auto;white-space: nowrap;overflow: hidden;font-size: 1em;text-align: center;}
 .select-wheel-style-gear .select-wheel-body ul li:before {content: ''; display: inline-block; height: 100%; vertical-align: middle;}

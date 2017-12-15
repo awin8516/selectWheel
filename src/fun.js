@@ -449,16 +449,17 @@ _$.dragDisabled = function (element){    //禁止图片拖拽
 };
 
 _$.onScrollEnd = function(el, callback){
-	var top = 0,ctop = 0;
+	var top = -1,ctop = el.scrollTop;
 	function check(){
 		if(ctop == top){
+			_$.removeEvent(el, 'scroll.forend');
 			clearInterval(timer);
-			callback && callback();
+			callback && callback(ctop);
 		}else{
 			top = ctop;
 		}
 	};
-	_$.addEvent(el, 'scroll', function(e){
+	_$.addEvent(el, 'scroll.forend', function(e){
 		ctop = el.scrollTop;
 	});
 	var timer = setInterval(check, 100);

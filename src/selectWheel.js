@@ -49,8 +49,8 @@ const _$ = require('./fun.js');
 		this.setData = function(index, data, pid){
 			var html = '';
 			for(var i=0; i<data.length; i++){
-				if(data[i].pid == pid || !pid){
-					html += '<li data-id="' + data[i].id +'"    '+(data[i].pid? "data-pid=" + data[i].pid:'')+' >' + data[i].name + '</li>';
+				if(  data[i].pid == pid || (  !pid && !isNaN(pid) ) || that.option.datePicker   ){
+					html += '<li '+(data[i].id? "data-id=" + data[i].id:'')+' '+(data[i].pid? "data-pid=" + data[i].pid:'')+' >' + data[i].name + '</li>';
 				};
 			};
 			if(!that.isgear && html == ''){
@@ -60,7 +60,6 @@ const _$ = require('./fun.js');
 			var space = that.isgear ? '<li class="space"></li><li class="space"></li><li class="space"></li>' : '';
 			that.o.ul[index].innerHTML = space+html+space;
 			that.o.ul[index].children = _$.children(that.o.ul[index]);
-			!that.liHeight && (that.liHeight = that.o.ul[index].children[0].clientHeight);
 			that.o.ul[index].scrollTop = 0;
 			that.isgear && that.gearTo(that.o.ul[index], 3);
 			
@@ -103,12 +102,16 @@ const _$ = require('./fun.js');
 			return Math.round(top/that.liHeight)+3;
 		};
 		this.gearTo = function(ul, index){
-			_$.animate(ul, {scrollTop : (index-3) * that.liHeight}, 1);
+			var top = (index-3) * that.liHeight;
+			top = top < 0 ? 0 : top > ul.scrollHeight-ul.clientHeight ? ul.scrollHeight-ul.clientHeight : top;
+			_$.stop(ul);
+			_$.animate(ul, {scrollTop : top}, 1);
 			that.triggerLi(ul.children[index]);
 		};
 		this.show = function(){
 			_$.addClass('select-wheel-active', that.o.html);
 			_$.addClass('select-wheel-show', that.o.element);
+			!that.liHeight && (that.liHeight = that.o.body.clientHeight/7);
 			that.goto(0);
 		};
 		this.hide = function(){
